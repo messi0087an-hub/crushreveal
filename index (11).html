@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Crush Reveal 💌</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff5f7;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px;}
+.app{max-width:430px;width:100%;margin:0 auto;padding:0 0 3rem;}
+.screen{display:none;}
+.screen.active{display:block;}
+.hdr{text-align:center;padding:2rem 0 1.25rem;}
+.big-emoji{font-size:52px;display:block;margin-bottom:10px;}
+.hdr h1{font-size:24px;font-weight:700;color:#222;margin-bottom:6px;}
+.hdr p{font-size:14px;color:#666;line-height:1.6;}
+.card{background:#fff;border:1px solid #f0d6de;border-radius:16px;padding:1.25rem;margin-bottom:10px;}
+.card-muted{background:#fdf5f7;border:1px dashed #e8b4c4;border-radius:16px;padding:1.25rem;margin-bottom:10px;}
+label.fl{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px;}
+input[type=text],textarea{width:100%;padding:11px 14px;font-size:14px;border:1.5px solid #f0d6de;border-radius:10px;background:#fffafb;color:#222;font-family:inherit;resize:none;outline:none;transition:border-color .2s,box-shadow .2s;}
+input[type=text]:focus,textarea:focus{border-color:#D4537E;box-shadow:0 0 0 3px rgba(212,83,126,.12);}
+textarea{height:72px;line-height:1.5;}
+.fg{margin-bottom:13px;}
+.fg:last-child{margin-bottom:0;}
+.btn-p{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:#D4537E;color:#fff;cursor:pointer;transition:opacity .15s,transform .1s;font-family:inherit;letter-spacing:.01em;}
+.btn-p:hover{opacity:.88;}
+.btn-p:active{transform:scale(.98);}
+.btn-s{width:100%;padding:12px;font-size:14px;font-weight:600;border:1.5px solid #e8c0cc;border-radius:12px;background:transparent;color:#555;cursor:pointer;transition:background .15s;font-family:inherit;margin-top:8px;}
+.btn-s:hover{background:#fdf5f7;}
+.btn-dare{background:#E8940A;}
+.btn-dark{background:#4B1528;}
+.confession-bubble{background:#fff0f4;border:1.5px solid #f4c0d1;border-radius:16px;padding:1rem 1.25rem;font-size:16px;color:#4B1528;line-height:1.7;font-style:italic;margin-bottom:1rem;}
+.lives-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.dot{width:14px;height:14px;border-radius:50%;background:#D4537E;transition:all .3s;}
+.dot.lost{background:#eee;border:1.5px solid #ddd;}
+.hint-card{background:#fff0f4;border:1px solid #f4c0d1;border-radius:12px;padding:12px 14px;margin-top:10px;display:none;}
+.hint-card.on{display:block;animation:fup .3s ease;}
+.hint-num{font-size:11px;font-weight:700;color:#993556;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.hint-text{font-size:14px;color:#4B1528;}
+.dare-card{background:#fffbf0;border:1.5px solid #FAC775;border-radius:16px;padding:1.25rem;margin-bottom:12px;}
+.dare-title{font-size:11px;font-weight:700;color:#8a5700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.dare-text{font-size:16px;color:#412402;font-weight:700;line-height:1.5;margin-bottom:10px;}
+.dare-note{font-size:12px;color:#a06500;line-height:1.5;}
+.link-box{background:#fff0f4;border:1.5px dashed #e8b4c4;border-radius:12px;padding:12px 14px;font-size:13px;color:#993556;font-weight:700;word-break:break-all;margin-bottom:12px;}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.share-btn{padding:11px;font-size:13px;font-weight:600;border:1.5px solid #f0d6de;border-radius:10px;background:#fff;color:#333;cursor:pointer;font-family:inherit;transition:background .15s;text-align:center;}
+.share-btn:hover{background:#fff0f4;}
+.reveal-name{font-size:38px;font-weight:800;color:#D4537E;margin:10px 0 6px;text-align:center;letter-spacing:-.5px;}
+.vibe-bar-wrap{background:#f5e0e8;border-radius:20px;height:12px;margin:8px 0 6px;overflow:hidden;}
+.vibe-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,#D4537E,#ff85a1);transition:width 1.4s cubic-bezier(.22,1,.36,1);}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat{background:#fff;border:1px solid #f0d6de;border-radius:12px;padding:12px;text-align:center;}
+.stat-n{font-size:26px;font-weight:800;color:#D4537E;}
+.stat-l{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+.reaction-row{display:flex;gap:8px;justify-content:center;margin:10px 0;}
+.rxn-btn{font-size:28px;padding:8px 10px;border-radius:12px;border:1.5px solid #f0d6de;background:#fff;cursor:pointer;transition:transform .15s,background .15s,border-color .15s;}
+.rxn-btn:hover{background:#fff0f4;transform:scale(1.15);}
+.rxn-btn.picked{background:#fff0f4;border-color:#D4537E;transform:scale(1.2);}
+.react-msg{font-size:13px;color:#993556;text-align:center;margin-top:6px;font-weight:600;display:none;}
+.err{font-size:12px;color:#c0392b;background:#fdf0ef;border:1px solid #f5c6c2;border-radius:10px;padding:8px 12px;margin-top:8px;display:none;}
+.streak-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#993556;background:#fff0f4;border:1px solid #f4c0d1;border-radius:20px;padding:5px 12px;margin-bottom:14px;}
+.section-label{font-size:12px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px;}
+@keyframes fup{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.22)}100%{transform:scale(1)}}
+.shake{animation:shake .3s ease;}
+.pop{animation:pop .35s ease;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SCREEN 1: SENDER -->
+  <div class="screen active" id="s-sender">
+    <div class="hdr">
+      <span class="big-emoji">💌</span>
+      <h1>Secret proposal</h1>
+      <p>Write your confession, set hints, and create a dare your crush must complete to find out who you are.</p>
+    </div>
+    <div class="card">
+      <div class="fg"><label class="fl">Your anonymous confession</label>
+        <textarea id="f-confession" placeholder="e.g. I've liked you since the beach trip last summer..."></textarea></div>
+      <div class="fg"><label class="fl">Your real name (the secret answer)</label>
+        <input type="text" id="f-name" placeholder="e.g. Marcus"></div>
+      <div class="fg"><label class="fl">Hint 1 — shown after wrong guess 1</label>
+        <input type="text" id="f-hint1" placeholder="e.g. We share a Tuesday chemistry lab"></div>
+      <div class="fg"><label class="fl">Hint 2 — shown after wrong guess 2</label>
+        <input type="text" id="f-hint2" placeholder="e.g. My name starts with the letter M"></div>
+    </div>
+    <div class="dare-card">
+      <div class="dare-title">🎲 Dare challenge — unlocked if they fail all 3 guesses</div>
+      <div class="fg"><label class="fl" style="color:#8a5700;">The dare</label>
+        <textarea id="f-dare" style="border-color:#FAC775;background:#fff8ee;color:#412402;" placeholder="e.g. Post an embarrassing throwback photo to your story with the caption 'someone likes me' and tag 3 friends 👀"></textarea></div>
+      <div class="fg"><label class="fl" style="color:#8a5700;">Secret dare code (you send this AFTER they complete the dare)</label>
+        <input type="text" id="f-darecode" style="border-color:#FAC775;background:#fff8ee;color:#412402;" placeholder="e.g. DAREDONE or a secret word"></div>
+      <p class="dare-note">After your crush completes the dare and sends you proof, you DM them this code. They type it into the app to unlock your identity.</p>
+    </div>
+    <div class="err" id="err-s">Please fill in ALL fields including the dare section before continuing.</div>
+    <button class="btn-p" onclick="createLink()">Create secret link ✨</button>
+  </div>
+
+  <!-- SCREEN 2: LINK READY -->
+  <div class="screen" id="s-link">
+    <div class="hdr">
+      <span class="big-emoji">🎉</span>
+      <h1>Your link is ready!</h1>
+      <p>Drop this in your Instagram bio, WhatsApp, or story sticker. The game begins when they click it.</p>
+    </div>
+    <div class="card">
+      <label class="fl">Your shareable link</label>
+      <div class="link-box" id="link-display">crushreveal.app/...</div>
+      <button class="btn-p" id="copy-btn" onclick="copyLink()">Copy link</button>
+      <div class="share-grid">
+        <button class="share-btn" onclick="shareIG()">📸 Instagram</button>
+        <button class="share-btn" onclick="shareWA()">💬 WhatsApp</button>
+        <button class="share-btn" onclick="shareTT()">🎵 TikTok bio</button>
+        <button class="share-btn" onclick="shareSnap()">👻 Snapchat</button>
+      </div>
+    </div>
+    <div class="card-muted">
+      <p style="font-size:13px;color:#888;margin-bottom:10px;font-weight:600;">👀 Preview what your crush sees when they click the link:</p>
+      <button class="btn-p btn-dark" onclick="goToCrush()">Open as crush 👀</button>
+    </div>
+    <button class="btn-s" onclick="reset()">← Create another</button>
+  </div>
+
+  <!-- SCREEN 3: CRUSH GAMEPLAY -->
+  <div class="screen" id="s-crush">
+    <div class="hdr">
+      <span class="big-emoji">😳</span>
+      <h1>Someone loves you!</h1>
+      <p>An anonymous admirer tagged you. You have 3 guesses to find out who. Choose wisely.</p>
+    </div>
+    <div class="streak-pill">🔥 <span id="streak-txt">First time playing</span></div>
+    <div class="confession-bubble" id="disp-confession">"..."</div>
+    <div class="lives-row">
+      <span style="font-size:13px;color:#888;font-weight:600;">Guesses:</span>
+      <div class="dot" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+      <span style="font-size:13px;font-weight:700;" id="lives-txt">3 left</span>
+    </div>
+    <div class="card">
+      <label class="fl">Who sent this?</label>
+      <input type="text" id="crush-input" placeholder="Type their name..." onkeydown="if(event.key==='Enter')submitGuess()">
+      <div class="err" id="err-g">Type a name before submitting!</div>
+    </div>
+    <button class="btn-p" onclick="submitGuess()">Submit guess 🎯</button>
+    <div class="hint-card" id="h1c"><div class="hint-num">💡 Hint 1 unlocked</div><div class="hint-text" id="h1t"></div></div>
+    <div class="hint-card" id="h2c"><div class="hint-num">💡 Hint 2 — this is your last clue!</div><div class="hint-text" id="h2t"></div></div>
+  </div>
+
+  <!-- SCREEN 4: DARE -->
+  <div class="screen" id="s-dare">
+    <div class="hdr">
+      <span class="big-emoji">🎲</span>
+      <h1>Out of guesses!</h1>
+      <p>The only way to find out who it is... complete this dare. Then get the secret code from them to unlock the name.</p>
+    </div>
+    <div class="dare-card">
+      <div class="dare-title">⚡ Your dare</div>
+      <div class="dare-text" id="disp-dare">Complete the dare to unlock...</div>
+      <p class="dare-note">Complete it, send proof to whoever posted this, and ask them for the secret code word to unlock their identity.</p>
+    </div>
+    <div class="card">
+      <label class="fl">Enter secret dare code</label>
+      <input type="text" id="dare-input" placeholder="Type the code they gave you..." onkeydown="if(event.key==='Enter')submitDare()">
+      <div class="err" id="err-d">Wrong code! Complete the dare and get the real code from the sender.</div>
+    </div>
+    <button class="btn-p btn-dare" onclick="submitDare()">Submit dare code 🔓</button>
+    <button class="btn-s" onclick="goToCrush()">← Try guessing again instead</button>
+  </div>
+
+  <!-- SCREEN 5: RESULT -->
+  <div class="screen" id="s-result">
+    <div class="hdr">
+      <span class="big-emoji" id="res-emoji">💘</span>
+      <h1 id="res-title">Revealed!</h1>
+      <p id="res-sub">The mystery sender is officially unveiled:</p>
+    </div>
+    <div class="card" style="text-align:center;padding:1.75rem 1.25rem;">
+      <div style="font-size:13px;color:#888;font-weight:600;margin-bottom:2px;">The person who confessed to you is</div>
+      <div class="reveal-name" id="rev-name">???</div>
+      <div style="font-size:12px;color:#888;font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;">Compatibility vibe</div>
+      <div class="vibe-bar-wrap"><div class="vibe-bar" id="vibe-bar" style="width:0%"></div></div>
+      <div style="font-size:15px;font-weight:700;color:#D4537E;" id="vibe-pct">calculating...</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-n" id="stat-guesses">?</div><div class="stat-l">guesses used</div></div>
+      <div class="stat"><div class="stat-n" id="stat-streak">?</div><div class="stat-l">games played</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:#333;margin-bottom:10px;">How do you feel about this? 👇</div>
+      <div class="reaction-row">
+        <button class="rxn-btn" onclick="react(this,'😍')">😍</button>
+        <button class="rxn-btn" onclick="react(this,'🤯')">🤯</button>
+        <button class="rxn-btn" onclick="react(this,'😅')">😅</button>
+        <button class="rxn-btn" onclick="react(this,'🥹')">🥹</button>
+        <button class="rxn-btn" onclick="react(this,'💀')">💀</button>
+      </div>
+      <div class="react-msg" id="react-msg"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#888;margin-bottom:10px;">Make your friends play — share your result:</div>
+      <button class="btn-p" onclick="shareResult()">Copy result caption 📋</button>
+      <div class="share-grid" style="margin-top:8px;">
+        <button class="share-btn" onclick="shareIG()">📸 Instagram story</button>
+        <button class="share-btn" onclick="shareWA()">💬 WhatsApp</button>
+      </div>
+    </div>
+    <button class="btn-s" onclick="reset()">← Create your own secret link</button>
+  </div>
+
+</div>
+<script>
+let G={confession:'',name:'',hint1:'',hint2:'',dare:'',dareCode:'',lives:3,guessesUsed:0,vibe:0,linkId:'',dareCompleted:false};
+let streak=0;
+try{streak=parseInt(localStorage.getItem('cr_streak')||'0');}catch(e){}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function createLink(){
+  const c=document.getElementById('f-confession').value.trim();
+  const n=document.getElementById('f-name').value.trim();
+  const h1=document.getElementById('f-hint1').value.trim();
+  const h2=document.getElementById('f-hint2').value.trim();
+  const d=document.getElementById('f-dare').value.trim();
+  const dc=document.getElementById('f-darecode').value.trim();
+  const err=document.getElementById('err-s');
+  if(!c||!n||!h1||!h2||!d||!dc){err.style.display='block';return;}
+  err.style.display='none';
+  G={confession:c,name:n,hint1:h1,hint2:h2,dare:d,dareCode:dc,lives:3,guessesUsed:0,
+     vibe:Math.floor(Math.random()*31)+65,linkId:Math.random().toString(36).slice(2,8),dareCompleted:false};
+  document.getElementById('link-display').textContent='crushreveal.app/'+G.linkId;
+  show('s-link');
+}
+
+function copyLink(){
+  const txt=document.getElementById('link-display').textContent;
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  const b=document.getElementById('copy-btn');
+  b.textContent='Copied! ✓';
+  setTimeout(()=>{b.textContent='Copy link';},2000);
+}
+
+function shareIG(){
+  const l=document.getElementById('link-display')?document.getElementById('link-display').textContent:'crushreveal.app/'+G.linkId;
+  alert('Instagram steps:\n1. Open Instagram\n2. Create a new Story\n3. Tap the sticker icon (😊)\n4. Choose "Link" sticker\n5. Paste: '+l+'\n\nCaption idea:\n"Someone confessed to me anonymously 💌 Can you guess who? Click the link 👀"');
+}
+function shareWA(){
+  const l=document.getElementById('link-display')?document.getElementById('link-display').textContent:'crushreveal.app/'+G.linkId;
+  window.open('https://wa.me/?text='+encodeURIComponent('Someone sent me an anonymous confession 💌 try to guess who it is: '+l));
+}
+function shareTT(){
+  const l=document.getElementById('link-display')?document.getElementById('link-display').textContent:'crushreveal.app/'+G.linkId;
+  alert('TikTok steps:\n1. Open TikTok\n2. Go to your Profile\n3. Tap "Edit Profile"\n4. Tap "Website"\n5. Paste: '+l);
+}
+function shareSnap(){
+  const l=document.getElementById('link-display')?document.getElementById('link-display').textContent:'crushreveal.app/'+G.linkId;
+  alert('Snapchat steps:\n1. Create a new Snap\n2. Tap the paperclip/link icon\n3. Paste: '+l+'\n4. Send to your crush or post to story');
+}
+
+function goToCrush(){
+  G.lives=3;G.guessesUsed=0;G.dareCompleted=false;
+  document.getElementById('disp-confession').textContent='"'+G.confession+'"';
+  document.getElementById('crush-input').value='';
+  document.getElementById('err-g').style.display='none';
+  document.getElementById('h1c').classList.remove('on');
+  document.getElementById('h2c').classList.remove('on');
+  updateDots();
+  streak++;
+  try{localStorage.setItem('cr_streak',streak);}catch(e){}
+  document.getElementById('streak-txt').textContent=streak===1?'First time playing':streak+' games played 🔥';
+  show('s-crush');
+}
+
+function updateDots(){
+  [1,2,3].forEach(i=>{document.getElementById('d'+i).classList.toggle('lost',i>G.lives);});
+  const lt=document.getElementById('lives-txt');
+  lt.textContent=G.lives+' left';
+  lt.style.color=G.lives===1?'#c0392b':'#333';
+}
+
+function submitGuess(){
+  const inp=document.getElementById('crush-input');
+  const g=inp.value.trim();
+  if(!g){document.getElementById('err-g').style.display='block';return;}
+  document.getElementById('err-g').style.display='none';
+  if(g.toLowerCase()===G.name.toLowerCase()){
+    G.guessesUsed=4-G.lives;
+    showResult(true,false);
+    return;
+  }
+  G.lives--;G.guessesUsed++;
+  inp.value='';
+  inp.classList.remove('shake');
+  void inp.offsetWidth;
+  inp.classList.add('shake');
+  setTimeout(()=>inp.classList.remove('shake'),350);
+  updateDots();
+  if(G.lives===2){
+    document.getElementById('h1t').textContent=G.hint1;
+    document.getElementById('h1c').classList.add('on');
+  }else if(G.lives===1){
+    document.getElementById('h2t').textContent=G.hint2;
+    document.getElementById('h2c').classList.add('on');
+  }else{
+    document.getElementById('disp-dare').textContent=G.dare;
+    show('s-dare');
+  }
+}
+
+function submitDare(){
+  const inp=document.getElementById('dare-input');
+  const code=inp.value.trim();
+  const err=document.getElementById('err-d');
+  if(code.toLowerCase()===G.dareCode.toLowerCase()){
+    G.dareCompleted=true;G.guessesUsed=3;
+    err.style.display='none';
+    showResult(false,true);
+  }else{
+    err.style.display='block';
+    inp.value='';
+  }
+}
+
+function showResult(won,dared){
+  document.getElementById('rev-name').textContent=G.name;
+  document.getElementById('stat-guesses').textContent=G.guessesUsed;
+  document.getElementById('stat-streak').textContent=streak;
+  const vb=document.getElementById('vibe-bar');
+  const vp=document.getElementById('vibe-pct');
+  setTimeout(()=>{vb.style.width=G.vibe+'%';vp.textContent=G.vibe+'% compatible 💘';},400);
+  if(won){
+    document.getElementById('res-emoji').textContent=G.guessesUsed<=1?'🎯':'✨';
+    document.getElementById('res-title').textContent=G.guessesUsed<=1?'First try, legend!':'You got it!';
+    document.getElementById('res-sub').textContent='You figured out who confessed to you:';
+  }else if(dared){
+    document.getElementById('res-emoji').textContent='🎲';
+    document.getElementById('res-title').textContent='Dare completed!';
+    document.getElementById('res-sub').textContent='You did the dare and earned the big reveal:';
+  }else{
+    document.getElementById('res-emoji').textContent='🕵️';
+    document.getElementById('res-title').textContent='Mystery solved!';
+    document.getElementById('res-sub').textContent='The anonymous sender was:';
+  }
+  show('s-result');
+}
+
+function react(btn,emoji){
+  document.querySelectorAll('.rxn-btn').forEach(b=>b.classList.remove('picked'));
+  btn.classList.add('picked');
+  btn.classList.add('pop');
+  setTimeout(()=>btn.classList.remove('pop'),400);
+  const msgs={'😍':"Looks like love might be mutual 👀","🤯'":"Didn't see that coming huh 😂","😅":"Awkward... or is it? 👀","🥹":"Aww this is actually so sweet 💌","💀":"Absolutely deceased 💀💀"};
+  const m=document.getElementById('react-msg');
+  m.textContent=msgs[emoji]||'Interesting reaction...';
+  m.style.display='block';
+}
+
+function shareResult(){
+  const guessWord=G.guessesUsed===1?'1 guess':G.guessesUsed+' guesses';
+  const daretxt=G.dareCompleted?' (had to complete a dare 😭)':'';
+  const cap='Someone confessed to me anonymously 💌\nI found out it was '+G.name+' in '+guessWord+daretxt+'!\nWe\'re '+G.vibe+'% compatible 😭\n\nFind out who likes YOU 👉 crushreveal.app/'+G.linkId;
+  navigator.clipboard.writeText(cap).catch(()=>{});
+  alert('Caption copied! ✓\n\nNow:\n1. Open Instagram\n2. Create a new Story\n3. Paste this caption as text\n4. Add your link sticker\n5. Post it!\n\n---\n'+cap);
+}
+
+function reset(){
+  ['f-confession','f-name','f-hint1','f-hint2','f-dare','f-darecode'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('err-s').style.display='none';
+  show('s-sender');
+}
+</script>
+</body>
+</html>
